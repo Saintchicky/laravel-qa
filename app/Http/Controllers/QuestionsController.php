@@ -14,9 +14,12 @@ class QuestionsController extends Controller
      */
     public function index()
     {
+        // Décompose les requêtes de la méthode
+        // \DB::enableQueryLog();
         //Dernière question et change de page toutes les 5 questions 
-        $questions = Question::latest()->paginate(5);
+        $questions = Question::with('user')->paginate(10);
         return view('questions.index',compact('questions'));
+        //dd(\DB::getQueryLog());
     }
 
     /**
