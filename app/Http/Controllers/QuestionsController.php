@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Question;
 use Illuminate\Http\Request;
 
+
 class QuestionsController extends Controller
 {
     /**
@@ -29,7 +30,9 @@ class QuestionsController extends Controller
      */
     public function create()
     {
-        //
+        $question = new Question();
+
+        return view('questions.create',compact('question'));
     }
 
     /**
