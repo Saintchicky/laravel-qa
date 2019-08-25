@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Question;
+use App\Http\Requests\AskQuestionRequest;
 use Illuminate\Http\Request;
 
 
@@ -18,7 +19,7 @@ class QuestionsController extends Controller
         // Décompose les requêtes de la méthode
         // \DB::enableQueryLog();
         //Dernière question et change de page toutes les 5 questions 
-        $questions = Question::with('user')->paginate(10);
+        $questions = Question::with('user')->latest()->paginate(10);
         return view('questions.index',compact('questions'));
         //dd(\DB::getQueryLog());
     }
@@ -41,9 +42,10 @@ class QuestionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AskQuestionRequest $request)
     {
-        //
+        $request->user()->questions()->create($request->only('title','body'));
+        return redirect()->route('questions.index')->with('success',"Your question has been submitted");
     }
 
     /**
