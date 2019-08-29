@@ -18,5 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::resource('questions','QuestionsController');
+//php artisan route:list --name=questions pour voir l'ensemble des routes de ressource
+//->except on retire une route qui est généré pour la personnaliser
+Route::resource('questions','QuestionsController')->except('show');
+Route::get('/questions/{slug}','QuestionsController@show')->name('questions.show');

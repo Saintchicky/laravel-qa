@@ -56,7 +56,10 @@ class QuestionsController extends Controller
      */
     public function show(Question $question)
     {
-        //
+    //en cliquant sur le lien de la question, on va sur la page de celle-ci
+    // On ajoute des vues grâce à increment qui se save ds la bdd
+       $question->increment('views');
+       return view('questions.show',compact('question'));
     }
 
     /**
