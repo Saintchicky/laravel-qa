@@ -24,7 +24,14 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        //
+        //pour autoriser les updates et deletes
+        \Gate::define('update-question',function($user,$question){
+            // retourne un booléen
+            return $user->id == $question->user_id;
+        });
+        \Gate::define('delete-question',function($user,$question){
+            // retourne un booléen
+            return $user->id == $question->user_id;
+        });
     }
 }
