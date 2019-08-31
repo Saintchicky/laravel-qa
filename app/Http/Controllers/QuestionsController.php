@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class QuestionsController extends Controller
 {
+    public function __construct() {
+        // Autorise seulement les gens non connecté  à aller sur index et show
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -72,9 +76,12 @@ class QuestionsController extends Controller
     {
         // autorise si L'user id et la même que ds user_id ds questions
         //AuthServiceProvider
-        if(\Gate::denies('update-question',$question)){
+        //1ère méthode avec Gate
+       /* if(\Gate::denies('update-question',$question)){
             abort(403,"Access Denied");
-        }   
+        }*/
+        //2eme méthode avec la class policy 
+        $this->authorize("update", $question);
         return view('questions.edit',compact('question'));
        
     }
@@ -88,9 +95,7 @@ class QuestionsController extends Controller
      */
     public function update(AskQuestionRequest $request, Question $question)
     {
-        if(\Gate::denies('update-question',$question)){
-            abort(403,"Access Denied");
-        } 
+        $this->authorize("update", $question);
         $question->update($request->only('title','body'));
         return redirect('/questions')->with('success',"Your question has been updated");
     }
@@ -103,9 +108,7 @@ class QuestionsController extends Controller
      */
     public function destroy(Question $question)
     {
-        if(\Gate::denies('delete-question',$question)){
-            abort(403,"Access Denied");
-        } 
+        $this->authorize("delete", $question);
         $question->delete();
         return redirect('/questions')->with('success',"Your question has been deleted");
     }
