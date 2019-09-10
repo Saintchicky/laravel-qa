@@ -26,7 +26,8 @@ class RouteServiceProvider extends ServiceProvider
     {
         //Personnaliser les paramètres
         Route::bind('slug',function($slug){
-            return Question::where('slug',$slug)->first() ?? abort(404);
+            //jointure des tables
+            return Question::with('answers.user')->where('slug',$slug)->first() ?? abort(404);
             //Si question alors question sinon 404 comme au dessus
            // return $question ? $question : abort(404);
         });
