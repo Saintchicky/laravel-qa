@@ -22,3 +22,5 @@ Route::get('/home', 'HomeController@index')->name('home');
 //->except on retire une route qui est généré pour la personnaliser
 Route::resource('questions','QuestionsController')->except('show');
 Route::get('/questions/{slug}','QuestionsController@show')->name('questions.show');
+
+Route::resource('questions.answers', 'AnswersController')->except(['index', 'create', 'show']);
