@@ -16,8 +16,6 @@ class AnswersController extends Controller
      */
     public function store(Question $question, Request $request)
     {
-        //En mettant le request validate en paramètre body il fait le check et insert la valeur du champ body dans 
-        // dans la table. Le + permet d'ajouter un sup ici l'user_id qui lie la question à son user
         $question->answers()->create($request->validate([
             'body' => 'required'
         ]) + ['user_id' => \Auth::id()]);
@@ -31,9 +29,11 @@ class AnswersController extends Controller
      * @param  \App\Answer  $answer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Answer $answer)
+    public function edit(Question $question, Answer $answer)
     {
-        //
+        $this->authorize('update', $answer);
+
+        return view('answers.edit', compact('question', 'answer'));
     }
 
     /**
@@ -43,9 +43,15 @@ class AnswersController extends Controller
      * @param  \App\Answer  $answer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Answer $answer)
+    public function update(Request $request, Question $question, Answer $answer)
     {
-        //
+        $this->authorize('update', $answer);
+
+        $answer->update($request->validate([
+            'body' => 'required',
+        ]));
+
+        return redirect()->route('questions.show', $question->slug)->with('success', 'Your answer has been updated');
     }
 
     /**
