@@ -12,51 +12,55 @@
                             <a href="{{ route('questions.create') }}" class="btn btn-outline-secondary">Ask Question</a>
                         </div>
                     </div>
+                    
                 </div>
 
                 <div class="card-body">
-                    @include('layouts._messages')
-                  @foreach ($questions as $question )
-                      <div class="media">
-                          <div class="d-flex flex-column counters">
+                    @include ('layouts._messages')
+
+                    @foreach ($questions as $question)
+                        <div class="media">
+                            <div class="d-flex flex-column counters">
                                 <div class="vote">
-                                  <strong>{{$question->votes}}</strong> {{str_plural('vote',$question->votes)}}
-                                </div>
-                                <div class="status {{$question->status}}">
-                                    <strong>{{$question->answers_count }}</strong> {{str_plural('answer',$question->answers_count )}}
-                                </div>
+                                    <strong>{{ $question->votes_count }}</strong> {{ str_plural('vote', $question->votes_count) }}
+                                </div>                            
+                                <div class="status {{ $question->status }}">
+                                    <strong>{{ $question->answers_count }}</strong> {{ str_plural('answer', $question->answers_count) }}
+                                </div>                            
                                 <div class="view">
-                                    {{$question->views . " " . str_plural('view',$question->views )}}
-                                </div>
-                          </div>
-                          <div class="media-body">
+                                    {{ $question->views . " " . str_plural('view', $question->views) }}
+                                </div>                            
+                            </div>
+                            <div class="media-body">
                                 <div class="d-flex align-items-center">
-                                        <h3 class="mt-0"><a href="{{ $question->url }}">{{ $question->title }}</a></h3>
-                                        <div class="ml-auto">
-                                            <!-- Si l'utilisateur est loggé et que l'id user est bien lié à sa question alors le bouton apparaît -->
-                                            @can('update-question',$question)
-                                                <a href="{{ route('questions.edit', $question->id) }}" class="btn btn-sm btn-outline-info">Edit</a>
-                                            @endcan
-                                            @can('delete-question',$question)
-                                                <form class="form-delete" method="post" action="{{ route('questions.destroy', $question->id) }}">
-                                                    @method('DELETE')
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"  onClick="return confirm('Are you sure?')">Delete</button>
-                                                </form>
-                                            @endcan
-                                        </div>
+                                    <h3 class="mt-0"><a href="{{ $question->url }}">{{ $question->title }}</a></h3>
+                                    <div class="ml-auto">
+                                        @can ('update', $question)
+                                            <a href="{{ route('questions.edit', $question->id) }}" class="btn btn-sm btn-outline-info">Edit</a>
+                                        @endcan
+                                        @can ('delete', $question)
+                                            <form class="form-delete" method="post" action="{{ route('questions.destroy', $question->id) }}">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                            </form>
+                                        @endcan
+                                    </div>
                                 </div>
-                          <p class="leader">
-                              Asked by
-                              <a href="{{$question->user->url}}">{{$question->user->name}}</a>
-                          <small class="text-muted">{{$question->created_date}}</small>
-                          </p>
-                            {{str_limit($question->body,250 )}}
-                          </div>
-                      </div>
-                      <hr>
-                  @endforeach
-                    {{$questions->links()}}
+                                <p class="lead">
+                                    Asked by 
+                                    <a href="{{ $question->user->url }}">{{ $question->user->name }}</a> 
+                                    <small class="text-muted">{{ $question->created_date }}</small>
+                                </p>
+                                {{ str_limit($question->body, 250) }}
+                            </div>                        
+                        </div>
+                        <hr>
+                    @endforeach
+
+                    <div class="mx-auto">
+                        {{ $questions->links() }}
+                    </div>
                 </div>
             </div>
         </div>

@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    protected $fillable = ['title','body'];
-    public function user()
-    {
+    protected $fillable = ['title', 'body'];
+    
+    public function user() {
         return $this->belongsTo(User::class);
-    }
+    }    
     public function setTitleAttribute($value)
     {
         $this->attributes['title'] = $value;
@@ -18,17 +18,16 @@ class Question extends Model
     }
     public function getUrlAttribute()
     {
-        return route('questions.show',$this->slug);
+        return route("questions.show", $this->slug);
     }
     public function getCreatedDateAttribute()
     {
-        // Pour afficher en jour
         return $this->created_at->diffForHumans();
     }
     public function getStatusAttribute()
     {
-        if($this->answers_count > 0){
-            if($this->best_answer_id){
+        if ($this->answers_count > 0) {
+            if ($this->best_answer_id) {
                 return "answered-accepted";
             }
             return "answered";
@@ -42,6 +41,8 @@ class Question extends Model
     public function answers()
     {
         return $this->hasMany(Answer::class);
+        // $question->answers->count()
+        // foreach ($question->answers as $answer)
     }
     public function acceptBestAnswer(Answer $answer)
     {
@@ -51,11 +52,11 @@ class Question extends Model
     public function favorites()
     {
         //Ajoute le date created
-        return $this->belongsToMany(User::class,'favorites')->withTimestamps();
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps(); //, 'question_id', 'user_id');
     }
     public function isFavorited()
     {
-        return $this->favorites()->where('user_id',auth()->id())->count() > 0;
+        return $this->favorites()->where('user_id', auth()->id())->count() > 0;
     }
     public function getIsFavoritedAttribute()
     {
@@ -63,6 +64,18 @@ class Question extends Model
     }
     public function getFavoritesCountAttribute()
     {
-        return $this->favorites()->count();
+        return $this->favorites->count();
     }
-} 
+    public function votes()
+    {
+        return $this->morphToMany(User::class, 'votable');
+    }
+    public function upVotes()
+    {
+        return $this->votes()->wherePivot('vote', 1);
+    }
+    public function downVotes()
+    {
+        return $this->votes()->wherePivot('vote', -1);
+    }
+}
