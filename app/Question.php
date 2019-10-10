@@ -18,6 +18,12 @@ class Question extends Model
         $this->attributes['title'] = $value;
         $this->attributes['slug'] = str_slug($value);
     }
+    // 2ème façon clean avant envoi bdd
+    // public function setBodyAttribute($value)
+    // {
+    //     // clean ac purifer
+    //     $this->attributes['body'] = clean($value);
+    // }
     public function getUrlAttribute()
     {
         return route("questions.show", $this->slug);
@@ -38,7 +44,8 @@ class Question extends Model
     }
     public function getBodyHtmlAttribute()
     {
-        return $this->bodyHtml();
+        // Clean = composer purifier
+        return clean($this->bodyHtml());
     }
     public function answers()
     {
@@ -78,6 +85,6 @@ class Question extends Model
     }
     private function bodyHtml()
     {
-        return \Parsedown::instance()->text($this->body);
+        return clean(\Parsedown::instance()->text($this->body));
     }
 }
