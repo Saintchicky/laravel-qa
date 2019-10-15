@@ -25,6 +25,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    // Déclarer appends pour utiliser les accessors ds vueJs
+    protected $appends = ['url','avatar'];
     public function questions()
     {
         return $this->hasMany(Question::class);

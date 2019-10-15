@@ -9,7 +9,8 @@ class Question extends Model
     use VoteTableTrait;
 
     protected $fillable = ['title', 'body'];
-    
+    // Déclarer appends pour utiliser les accessors ds vueJs
+    protected $appends = ['created_date'];
     public function user() {
         return $this->belongsTo(User::class);
     }    

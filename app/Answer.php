@@ -9,6 +9,8 @@ class Answer extends Model
     use VoteTableTrait;
 
     protected $fillable = ['body', 'user_id'];
+    // Déclarer appends pour utiliser les accessors ds vueJs
+    protected $appends = ['created_date'];
     
     public function question()
     {
