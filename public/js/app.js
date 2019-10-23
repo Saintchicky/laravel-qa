@@ -3713,8 +3713,50 @@ __webpack_require__.r(__webpack_exports__);
   props: ['answer'],
   data: function data() {
     return {
-      editing: false
+      editing: false,
+      body: this.answer.body,
+      bodyHtml: this.answer.body_html,
+      id: this.answer.id,
+      questionId: this.answer.question_id,
+      beforeEditCache: null
     };
+  },
+  methods: {
+    edit: function edit() {
+      // Pour éviter que quand on clique sur edit on efface le texte, on fait cancel,
+      // on le retrouve plus que si on reload la page
+      this.beforeEditCache = this.body;
+      this.editing = true;
+    },
+    cancel: function cancel() {
+      this.body = this.beforeEditCache;
+      this.editing = false;
+    },
+    update: function update() {
+      var _this = this;
+
+      // axios pour appel de l'ajax avec comme action patch(mettre à jour)
+      axios.patch("/questions/".concat(this.questionId, "/answers/").concat(this.id), {
+        // laravel s'occupe du token crsf présent ds le fichier bootstrap
+        // js (l24) et ds le deuxième paramètre on met les valeurs 
+        // à envoyer
+        // Le patch méthode retourne une promesses
+        body: this.body
+      }).then(function (res) {
+        _this.editing = false;
+        _this.bodyHtml = res.data.body_html;
+        alert(res.data.message);
+      }) // succès on peut mettre ce qu'on souhaute
+      ["catch"](function (err) {
+        console.log("something bad happen");
+      }); // erreur
+    }
+  },
+  computed: {
+    // si le nombre est inférieur à 10 caractères alors true
+    isInvalid: function isInvalid() {
+      return this.body.length < 10;
+    }
   }
 });
 

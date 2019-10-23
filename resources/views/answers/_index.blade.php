@@ -1,5 +1,5 @@
 @if ($answersCount > 0)
-    <div class="row mt-4">
+    <div class="row mt-4" v-cloak><!--S'ouvre que si on l'appelle grâce à l'instance associée -->
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">

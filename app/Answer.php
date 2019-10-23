@@ -10,7 +10,7 @@ class Answer extends Model
 
     protected $fillable = ['body', 'user_id'];
     // Déclarer appends pour utiliser les accessors ds vueJs
-    protected $appends = ['created_date'];
+    protected $appends = ['created_date','body_html'];
     
     public function question()
     {

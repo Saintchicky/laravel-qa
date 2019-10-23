@@ -3,18 +3,22 @@
     @include ('shared._vote', [
         'model' => $answer
     ])
+    <!--On met la méthode après prevent update-->
     <div class="media-body">
-        <form v-if="editing"> <!--c'est comme if(editing)-->
-            Edit answer form
-            <button @click="editing = false" type="button">Update</button>
+        <form v-if="editing" @submit.prevent="update"> <!--c'est comme if(editing)-->
+            <div class="form-group">
+                <textarea rows="10" v-model="body" class="form-control" required></textarea>
+            </div>
+            <button class="btn btn-primary" :disabled="isInvalid">Update</button>
+            <button class="btn btn-outline-secondary" @click="cancel" type="button">Cancel</button>
         </form>
         <div v-else><!--Doit être utilisé sur le même niveau-->
-            {!! $answer->body_html !!}
+            <div v-html="bodyHtml"></div>
             <div class="row">
                 <div class="col-4">
                     <div class="ml-auto">
                         @can ('update', $answer)
-                            <a @click.prevent="editing = true" class="btn btn-sm btn-outline-info">Edit</a>
+                            <button @click.prevent="edit" class="btn btn-sm btn-outline-info">Edit</button>
                         @endcan
                         @can ('delete', $answer)
                             <form class="form-delete" method="post" action="{{ route('questions.answers.destroy', [$question->id, $answer->id]) }}">
