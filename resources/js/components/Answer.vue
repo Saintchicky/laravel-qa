@@ -24,7 +24,8 @@ export default {
         },
         update(){
             // axios pour appel de l'ajax avec comme action patch(mettre à jour)
-             axios.patch(`/questions/${this.questionId}/answers/${this.id}`, {
+            // `/questions/${this.questionId}/answers/${this.id}` == this.endpoint
+             axios.patch(this.endpoint, {
                 // laravel s'occupe du token crsf présent ds le fichier bootstrap
                 // js (l24) et ds le deuxième paramètre on met les valeurs 
                 // à envoyer
@@ -40,12 +41,25 @@ export default {
             .catch(err=>{
                 console.log("something bad happen")
             })// erreur
+        },
+        destroy(){
+            if(confirm('Are you sure')){
+                axios.delete(this.endpoint)
+                .then(res=>{
+                    $(this.$el).fadeOut(500,()=>{
+                        alert(res.data.message);
+                    });
+                })
+            }
         }
     },
     computed:{
         // si le nombre est inférieur à 10 caractères alors true
         isInvalid(){
             return  this.body.length < 10;
+        },
+        endpoint(){
+            return `/questions/${this.questionId}/answers/${this.id}`;
         }
     }
 }

@@ -3736,7 +3736,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       // axios pour appel de l'ajax avec comme action patch(mettre à jour)
-      axios.patch("/questions/".concat(this.questionId, "/answers/").concat(this.id), {
+      // `/questions/${this.questionId}/answers/${this.id}` == this.endpoint
+      axios.patch(this.endpoint, {
         // laravel s'occupe du token crsf présent ds le fichier bootstrap
         // js (l24) et ds le deuxième paramètre on met les valeurs 
         // à envoyer
@@ -3750,12 +3751,26 @@ __webpack_require__.r(__webpack_exports__);
       ["catch"](function (err) {
         console.log("something bad happen");
       }); // erreur
+    },
+    destroy: function destroy() {
+      var _this2 = this;
+
+      if (confirm('Are you sure')) {
+        axios["delete"](this.endpoint).then(function (res) {
+          $(_this2.$el).fadeOut(500, function () {
+            alert(res.data.message);
+          });
+        });
+      }
     }
   },
   computed: {
     // si le nombre est inférieur à 10 caractères alors true
     isInvalid: function isInvalid() {
       return this.body.length < 10;
+    },
+    endpoint: function endpoint() {
+      return "/questions/".concat(this.questionId, "/answers/").concat(this.id);
     }
   }
 });
