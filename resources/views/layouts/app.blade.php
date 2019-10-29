@@ -9,8 +9,7 @@
 
     <title>{{ config('app.name', 'QA') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+   
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -76,5 +75,14 @@
             @yield('content')
         </main>
     </div>
+    <script>
+        window.Auth = {!! json_encode([
+            'signedIn' => Auth::check(),
+            'user'=> Auth::user()
+            ])
+        !!}
+    </script>
+     <!-- Scripts j'ai enlevé defer car je mets le fichier script en bas-->
+     <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
