@@ -16,6 +16,18 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 Vue.use(VueIziToast);
 
+import policies from './policies';
+Vue.prototype.authorize = function (policy, model) {
+    if ( ! window.Auth.signedIn) return false;
+
+    if (typeof policy === 'string' && typeof model === 'object') {
+        const user = window.Auth.user;
+
+        return policies[policy](user, model);        
+    }
+};
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
