@@ -24,10 +24,6 @@ export default {
         },
         endpoint(){
             return `/questions/${ this.id }/favorites`;
-        },
-        signedIn(){
-            // retourne l'user ou null si il est loggé
-            return window.Auth.signedIn;
         }
     },
     methods:{
