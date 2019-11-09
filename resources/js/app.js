@@ -13,8 +13,12 @@ window.Vue = require('vue');
 //Pop up JS 
 import VueIziToast from 'vue-izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+import Autorization from './authorization/authorize';
 
 Vue.use(VueIziToast);
+Vue.use(Autorization);
+
+
 
 /**
  * The following block of code may be used to automatically register your
