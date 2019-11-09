@@ -1,8 +1,6 @@
 <answer :answer="{{$answer}}" inline-template>
 <div class="media post">
-    @include ('shared._vote', [
-        'model' => $answer
-    ])
+    <vote :model="{{ $answer }}" name="answer"></vote>
     <!--On met la méthode après prevent update-->
     <div class="media-body">
         <form v-if="editing" @submit.prevent="update"> <!--c'est comme if(editing)-->
