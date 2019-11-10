@@ -90,9 +90,13 @@ export default {
                     ['<button><b>YES</b></button>',(instance, toast) =>{
                             axios.delete(this.endpoint)
                             .then(res=>{
-                                $(this.$el).fadeOut(500,()=>{
-                                    this.$toast.success(res.data.message,"Success",{timeout:3000});
-                                });
+                                // avec $emit nous créons un event qui a comme paramètre delected
+                                // cet event est envoyé au papa Answers.vue
+                                this.$emit('delected');
+                                this.$toast.success(res.data.message,"Success",{timeout:3000});
+                                // $(this.$el).fadeOut(500,()=>{
+                                //     
+                                // });
                             })
                         instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
 

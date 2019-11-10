@@ -8,7 +8,7 @@
                     </div>
                     <hr>
                     <!-- Déclarer la clé -->
-                    <answer v-for="answer in answers"  :answer="answer" :key="answer.id"></answer>
+                    <answer @delected="remove(index)" v-for="(answer,index) in answers"  :answer="answer" :key="answer.id"></answer>
                     <div class="text-center mt-3" v-if="nextUrl">
                         <button @click.prevent="fetch(nextUrl)" class="btn btn-outline-secondary">Load more answers</button>
                     </div>
@@ -34,6 +34,12 @@ export default {
         this.fetch(`/questions/${this.questionId}/answers`);
     },
     methods: {
+        remove(index){
+            // splice permet de supprimer, ici on met l'indice et le nombre d'items à supprimer
+            this.answers.splice(index,1)
+            this.count--;
+            // on décremente le count de vote
+        },
         fetch (endpoint) {
             axios.get(endpoint)
             .then(({data}) => {

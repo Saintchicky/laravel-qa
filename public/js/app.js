@@ -3868,11 +3868,16 @@ __webpack_require__.r(__webpack_exports__);
         position: 'center',
         buttons: [['<button><b>YES</b></button>', function (instance, toast) {
           axios["delete"](_this2.endpoint).then(function (res) {
-            $(_this2.$el).fadeOut(500, function () {
-              _this2.$toast.success(res.data.message, "Success", {
-                timeout: 3000
-              });
-            });
+            // avec $emit nous créons un event qui a comme paramètre delected
+            // cet event est envoyé au papa Answers.vue
+            _this2.$emit('delected');
+
+            _this2.$toast.success(res.data.message, "Success", {
+              timeout: 3000
+            }); // $(this.$el).fadeOut(500,()=>{
+            //     
+            // });
+
           });
           instance.hide({
             transitionOut: 'fadeOut'
@@ -3951,6 +3956,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     this.fetch("/questions/".concat(this.questionId, "/answers"));
   },
   methods: {
+    remove: function remove(index) {
+      // splice permet de supprimer, ici on met l'indice et le nombre d'items à supprimer
+      this.answers.splice(index, 1);
+      this.count--; // on décremente le count de vote
+    },
     fetch: function fetch(endpoint) {
       var _this = this;
 
@@ -40338,10 +40348,15 @@ var render = function() {
                 _vm._v(" "),
                 _c("hr"),
                 _vm._v(" "),
-                _vm._l(_vm.answers, function(answer) {
+                _vm._l(_vm.answers, function(answer, index) {
                   return _c("answer", {
                     key: answer.id,
-                    attrs: { answer: answer }
+                    attrs: { answer: answer },
+                    on: {
+                      delected: function($event) {
+                        return _vm.remove(index)
+                      }
+                    }
                   })
                 }),
                 _vm._v(" "),
