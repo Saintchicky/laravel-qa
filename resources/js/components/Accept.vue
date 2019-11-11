@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import EventBus from '../event-bus';
 export default {
     props: ['answer'],
     data () {
@@ -24,6 +25,12 @@ export default {
             isBest: this.answer.is_best,
             id: this.answer.id
         }
+    },
+    // méthode created (hook) de vue js qui permet d'accèder au data avant le render ou le mont de la page
+    created () {
+        EventBus.$on('accepted', id => {
+            this.isBest = (id === this.id);
+        })
     },
     methods: {
         create () {
@@ -34,6 +41,8 @@ export default {
                     position: 'bottomLeft'
                 });
                 this.isBest = true;
+                // emettre un event
+                EventBus.$emit('accepted', this.id);
             })
         }
     },
