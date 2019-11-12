@@ -1,24 +1,28 @@
- <template>
-    <div class="row mt-4" v-cloak v-if="count"><!--S'ouvre que si on l'appelle grâce à l'instance associée -->
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h2>{{ title }}</h2>
-                    </div>
-                    <hr>
-                    <!-- Déclarer la clé -->
-                    <answer @delected="remove(index)" v-for="(answer,index) in answers"  :answer="answer" :key="answer.id"></answer>
-                    <div class="text-center mt-3" v-if="nextUrl">
-                        <button @click.prevent="fetch(nextUrl)" class="btn btn-outline-secondary">Load more answers</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<template>
+    <div>
+        <div class="row mt-4" v-cloak v-if="count"><!--S'ouvre que si on l'appelle grâce à l'instance associée -->
+           <div class="col-md-12">
+               <div class="card">
+                   <div class="card-body">
+                       <div class="card-title">
+                           <h2>{{ title }}</h2>
+                       </div>
+                       <hr>
+                       <!-- Déclarer la clé -->
+                       <answer @delected="remove(index)" v-for="(answer,index) in answers"  :answer="answer" :key="answer.id"></answer>
+                       <div class="text-center mt-3" v-if="nextUrl">
+                           <button @click.prevent="fetch(nextUrl)" class="btn btn-outline-secondary">Load more answers</button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+       <new-answer @created="add" :question-id="question.id"></new-answer>
     </div>
 </template>
 <script>
 import Answer from './Answer.vue';
+import NewAnswer from './NewAnswer.vue';
 export default {
     props: ['question'],
     data () {
@@ -34,6 +38,10 @@ export default {
         this.fetch(`/questions/${this.questionId}/answers`);
     },
     methods: {
+        add(answer){
+            this.answers.push(answer);
+            this.count++;
+        },
         remove(index){
             // splice permet de supprimer, ici on met l'indice et le nombre d'items à supprimer
             this.answers.splice(index,1)
@@ -54,6 +62,6 @@ export default {
             return this.count + " " + (this.count > 1 ? 'Answers' : 'Answer');
         }
     },
-    components:{ Answer }
+    components:{ Answer, NewAnswer }
 }
 </script>
