@@ -10,7 +10,7 @@ class Question extends Model
 
     protected $fillable = ['title', 'body'];
     // Déclarer appends pour utiliser les accessors ds vueJs
-    protected $appends = ['created_date','is_favorited','favorites_count'];
+    protected $appends = ['created_date','is_favorited','favorites_count','body_html'];
     public function user() {
         return $this->belongsTo(User::class);
     }    
