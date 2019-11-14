@@ -31,12 +31,14 @@
 <script>
 import Vote from './Vote.vue';
 import UserInfo from './UserInfo.vue';
+import modification from '../mixins/modification';
 export default {
     props:['answer'],
     components:{ Vote, UserInfo },
+    //accepte un array et on récupère les méthodes du fichier
+    mixins:[modification],
     data(){
         return{
-            editing: false,
             body: this.answer.body,
             bodyHtml: this.answer.body_html,
             id: this.answer.id,
@@ -45,16 +47,20 @@ export default {
         }
     },
     methods:{
-        edit(){
+        setEditCache(){
             // Pour éviter que quand on clique sur edit on efface le texte, on fait cancel,
             // on le retrouve plus que si on reload la page
             this.beforeEditCache = this.body;
-            this.editing = true;
         },
-        cancel(){
+        restoreFromCache(){
             this.body = this.beforeEditCache;
-            this.editing = false;
         },
+        payload(){
+            return{
+                body: this.body
+            };
+        },
+        /* plus utiliser car on passe par mixin
         update(){
             // axios pour appel de l'ajax avec comme action patch(mettre à jour)
             // `/questions/${this.questionId}/answers/${this.id}` == this.endpoint
@@ -75,41 +81,20 @@ export default {
             .catch(err=>{
                 this.$toast.error(err.data.message,"Error",{timeout:3000});
             })// erreur
-        },
-        destroy(){
-            this.$toast.question('Are you sure about that?',"Confirm",{
-                timeout: 20000,
-                close: false,
-                overlay: true,
-                displayMode: 'once',
-                id: 'question',
-                zindex: 999,
-                title: 'Hey',
-                position: 'center',
-                buttons: [
-                    ['<button><b>YES</b></button>',(instance, toast) =>{
-                            axios.delete(this.endpoint)
-                            .then(res=>{
-                                // avec $emit nous créons un event qui a comme paramètre delected
-                                // cet event est envoyé au papa Answers.vue
-                                this.$emit('delected');
-                                this.$toast.success(res.data.message,"Success",{timeout:3000});
-                                // $(this.$el).fadeOut(500,()=>{
-                                //     
-                                // });
-                            })
-                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-
-                    }, true],
-                    ['<button>NO</button>', function (instance, toast) {
-                    
-                        instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-
-                    }],
-                ]
-            });
-            
+        },*/
+        delete(){
+             axios.delete(this.endpoint)
+                .then(res=>{
+                    // avec $emit nous créons un event qui a comme paramètre delected
+                    // cet event est envoyé au papa Answers.vue
+                    this.$emit('delected');
+                    this.$toast.success(res.data.message,"Success",{timeout:3000});
+                    // $(this.$el).fadeOut(500,()=>{
+                    //     
+                    // });
+                });
         }
+        
     },
     computed:{
         // si le nombre est inférieur à 10 caractères alors true
