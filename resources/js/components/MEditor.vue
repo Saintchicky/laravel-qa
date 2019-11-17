@@ -20,7 +20,10 @@
     </div>
     </template>
 <script>
+// vient du plugin npm marddown it
 import MarkDownIt from 'markdown-it';
+// Pour que la hauteur du textarea se règle en fonction du contenu
+import autosize from 'autosize';
 const md = new MarkDownIt();
 export default {
     props:['body'],
@@ -29,6 +32,15 @@ export default {
             // on lance le plugin markdown avec un render
             return md.render(this.body);
         }
+    },
+    // permet d'activer le plugin à son lancement lorsque qu'on clique sur edit
+    mounted(){
+        autosize(this.$el.querySelector('textarea'));
+    },
+    // hook qui s'exécute après le changement ds le composant pour re render du dom
+    updated(){
+        // document = this.$el
+        autosize(this.$el.querySelector('textarea'));
     }
 }
 </script>
