@@ -15,7 +15,7 @@
             <div class="tab-pane active" id="write">
                 <slot></slot>
             </div>
-            <div class="tab-pane" id="preview">Preview...</div>
+            <div class="tab-pane" v-html="preview" id="preview"></div>
         </div>
     </div>
     </template>
@@ -24,5 +24,11 @@ import MarkDownIt from 'markdown-it';
 const md = new MarkDownIt();
 export default {
     props:['body'],
+    computed:{
+        preview(){
+            // on lance le plugin markdown avec un render
+            return md.render(this.body);
+        }
+    }
 }
 </script>
