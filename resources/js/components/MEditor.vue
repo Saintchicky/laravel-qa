@@ -20,6 +20,8 @@
     </div>
     </template>
 <script>
+import MarkDownIt from 'markdown-it';
+const md = new MarkDownIt();
 export default {
     props:['body'],
 }
