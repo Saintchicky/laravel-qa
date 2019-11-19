@@ -21,10 +21,14 @@
     </template>
 <script>
 // vient du plugin npm marddown it
-import MarkDownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
+// theme js
+import prism from 'markdown-it-prism';
 // Pour que la hauteur du textarea se règle en fonction du contenu
 import autosize from 'autosize';
-const md = new MarkDownIt();
+
+const md = new MarkdownIt();
+md.use(prism);
 export default {
     props:['body'],
     computed:{
