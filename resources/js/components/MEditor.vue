@@ -38,9 +38,9 @@ export default {
         }
     },
     // permet d'activer le plugin à son lancement lorsque qu'on clique sur edit
-    mounted(){
-        autosize(this.$el.querySelector('textarea'));
-    },
+    // mounted(){
+    //     autosize(this.$el.querySelector('textarea'));
+    // },
     // hook qui s'exécute après le changement ds le composant pour re render du dom
     updated(){
         // document = this.$el

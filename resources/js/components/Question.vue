@@ -56,7 +56,7 @@
 import Vote from './Vote.vue';
 import UserInfo from './UserInfo.vue';
 import MEditor from './MEditor.vue';
-import Prism from 'prismjs';
+
 import modification from '../mixins/modification';
 
 export default {
@@ -93,10 +93,6 @@ export default {
         restoreFromCache(){
             this.body = this.beforeEditCache.body;
             this.title = this.beforeEditCache.title;
-            // récupère la ref de la div v-html ='bodyHtml'
-            const el = this.$refs.bodyHtml;
-            // quand on fait cancel cela garde le highlight
-            if(el) Prism.highlightAllUnder(el);
         },
         payload(){
             return {
