@@ -23,14 +23,17 @@
 <script>
 import Answer from './Answer.vue';
 import NewAnswer from './NewAnswer.vue';
+import highlight from '../mixins/highlight';
 
 export default {
     props: ['question'],
+    mixins:[highlight],
     data () {
         return {
             questionId: this.question.id,
             count: this.question.answers_count,
             answers: [],
+            answerIds: [],
             nextUrl: null  
         }
     },
@@ -42,6 +45,10 @@ export default {
         add(answer){
             this.answers.push(answer);
             this.count++;
+            // nextThick permet de traiter une action avant le update
+            this.$nextTick(()=>{
+                this.highlight(`answer-${answer.id}`);
+            })   
         },
         remove(index){
             // splice permet de supprimer, ici on met l'indice et le nombre d'items à supprimer
@@ -50,11 +57,19 @@ export default {
             // on décremente le count de vote
         },
         fetch (endpoint) {
+            this.answerIds = [];
             axios.get(endpoint)
             .then(({data}) => {
+                this.answerIds = data.data.map(a => a.id);
                 // On ajoute les réponses ds le tableau déclaré en haut
                 this.answers.push(...data.data);
                 this.nextUrl = data.next_page_url;
+            })
+            .then(() => {
+                // Boucle pour activer les ids où y a des morceaux de codes en sourligner
+                this.answerIds.forEach(id => {
+                    this.highlight(`answer-${id}`);
+                })
             })
         }
     },

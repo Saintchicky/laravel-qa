@@ -9,7 +9,9 @@
                     <hr>
                     <form @submit.prevent="create">  
                         <div class="form-group">
-                            <textarea class="form-control" rows="7" v-model="body" name="body"></textarea>
+                            <m-editor :body="body" name="new-answer">
+                                <textarea class="form-control" rows="7" v-model="body" name="body"></textarea>
+                            </m-editor>
                         </div>
                         <div class="form-group">
                             <button type="submit" :disabled="isInvalid" class="btn btn-lg btn-outline-primary">Submit</button>
@@ -21,17 +23,21 @@
     </div>
 </template>
 <script>
+import MEditor from './MEditor.vue';
+
 export default {
-    props:['questionId'],
-    methods:{
-        create(){
-                axios.post(`/questions/${this.questionId}/answers`, {
+    props: ['questionId'],
+
+    components: { MEditor },
+
+    methods: {
+        create () {
+            axios.post(`/questions/${this.questionId}/answers`, {
                 body: this.body
             })
             .catch(error => {
                 this.$toast.error(error.response.data.message, "Error");
             })
-            // Unpick data
             .then(({data}) => {
                 this.$toast.success(data.message, "Success");
                 this.body = '';
@@ -39,12 +45,14 @@ export default {
             })
         }
     },
-    data(){
-        return{
-            body:''
+
+    data () {
+        return {
+            body: ''
         }
     },
-    computed:{
+
+    computed: {
         isInvalid () {
             return !this.signedIn || this.body.length < 10;
         }

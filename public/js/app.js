@@ -4078,9 +4078,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Vote_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Vote.vue */ "./resources/js/components/Vote.vue");
-/* harmony import */ var _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserInfo.vue */ "./resources/js/components/UserInfo.vue");
-/* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
+/* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
 //
 //
 //
@@ -4111,17 +4109,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
-
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['answer'],
-  components: {
-    Vote: _Vote_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    UserInfo: _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
-  },
   //accepte un array et on récupère les méthodes du fichier
-  mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
       body: this.answer.body,
@@ -4191,6 +4185,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     endpoint: function endpoint() {
       return "/questions/".concat(this.questionId, "/answers/").concat(this.id);
+    },
+    uniqueName: function uniqueName() {
+      return "answer-".concat(this.id); // permet d'avoir un id unique pour déclencher le js preview tab
     }
   }
 });
@@ -4208,6 +4205,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Answer_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Answer.vue */ "./resources/js/components/Answer.vue");
 /* harmony import */ var _NewAnswer_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NewAnswer.vue */ "./resources/js/components/NewAnswer.vue");
+/* harmony import */ var _mixins_highlight__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mixins/highlight */ "./resources/js/mixins/highlight.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -4240,13 +4238,16 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['question'],
+  mixins: [_mixins_highlight__WEBPACK_IMPORTED_MODULE_2__["default"]],
   data: function data() {
     return {
       questionId: this.question.id,
       count: this.question.answers_count,
       answers: [],
+      answerIds: [],
       nextUrl: null
     };
   },
@@ -4256,8 +4257,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   methods: {
     add: function add(answer) {
+      var _this = this;
+
       this.answers.push(answer);
-      this.count++;
+      this.count++; // nextThick permet de traiter une action avant le update
+
+      this.$nextTick(function () {
+        _this.highlight("answer-".concat(answer.id));
+      });
     },
     remove: function remove(index) {
       // splice permet de supprimer, ici on met l'indice et le nombre d'items à supprimer
@@ -4265,17 +4272,25 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.count--; // on décremente le count de vote
     },
     fetch: function fetch(endpoint) {
-      var _this = this;
+      var _this2 = this;
 
+      this.answerIds = [];
       axios.get(endpoint).then(function (_ref) {
-        var _this$answers;
+        var _this2$answers;
 
         var data = _ref.data;
+        _this2.answerIds = data.data.map(function (a) {
+          return a.id;
+        }); // On ajoute les réponses ds le tableau déclaré en haut
 
-        // On ajoute les réponses ds le tableau déclaré en haut
-        (_this$answers = _this.answers).push.apply(_this$answers, _toConsumableArray(data.data));
+        (_this2$answers = _this2.answers).push.apply(_this2$answers, _toConsumableArray(data.data));
 
-        _this.nextUrl = data.next_page_url;
+        _this2.nextUrl = data.next_page_url;
+      }).then(function () {
+        // Boucle pour activer les ids où y a des morceaux de codes en sourligner
+        _this2.answerIds.forEach(function (id) {
+          _this2.highlight("answer-".concat(id));
+        });
       });
     }
   },
@@ -4403,7 +4418,13 @@ __webpack_require__.r(__webpack_exports__);
 var md = new markdown_it__WEBPACK_IMPORTED_MODULE_0___default.a();
 md.use(markdown_it_prism__WEBPACK_IMPORTED_MODULE_1___default.a);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['body'],
+  props: ['body', 'name'],
+  methods: {
+    tabId: function tabId(tabName) {
+      var hash = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+      return "".concat(hash).concat(tabName).concat(this.name);
+    }
+  },
   computed: {
     preview: function preview() {
       // on lance le plugin markdown avec un render
@@ -4432,6 +4453,7 @@ md.use(markdown_it_prism__WEBPACK_IMPORTED_MODULE_1___default.a);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _MEditor_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MEditor.vue */ "./resources/js/components/MEditor.vue");
 //
 //
 //
@@ -4454,8 +4476,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['questionId'],
+  components: {
+    MEditor: _MEditor_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   methods: {
     create: function create() {
       var _this = this;
@@ -4464,8 +4492,7 @@ __webpack_require__.r(__webpack_exports__);
         body: this.body
       })["catch"](function (error) {
         _this.$toast.error(error.response.data.message, "Error");
-      }) // Unpick data
-      .then(function (_ref) {
+      }).then(function (_ref) {
         var data = _ref.data;
 
         _this.$toast.success(data.message, "Success");
@@ -4499,10 +4526,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Vote_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Vote.vue */ "./resources/js/components/Vote.vue");
-/* harmony import */ var _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserInfo.vue */ "./resources/js/components/UserInfo.vue");
-/* harmony import */ var _MEditor_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MEditor.vue */ "./resources/js/components/MEditor.vue");
-/* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
+/* harmony import */ var _mixins_modification__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/modification */ "./resources/js/mixins/modification.js");
 //
 //
 //
@@ -4557,18 +4581,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
-
-
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['question'],
-  components: {
-    Vote: _Vote_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    UserInfo: _UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    MEditor: _MEditor_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
-  },
-  mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  mixins: [_mixins_modification__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
       title: this.question.title,
@@ -4587,6 +4603,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     endpoint: function endpoint() {
       return "/questions/".concat(this.id, "/");
+    },
+    uniqueName: function uniqueName() {
+      return "question-".concat(this.id); // permet d'avoir un id unique pour déclencher le js preview tab
     }
   },
   methods: {
@@ -56151,111 +56170,147 @@ var render = function() {
       _c("vote", { attrs: { model: _vm.answer, name: "answer" } }),
       _vm._v(" "),
       _c("div", { staticClass: "media-body" }, [
-        _vm.editing
-          ? _c(
-              "form",
+        _c(
+          "form",
+          {
+            directives: [
               {
-                on: {
-                  submit: function($event) {
-                    $event.preventDefault()
-                    return _vm.update($event)
-                  }
-                }
-              },
+                name: "show",
+                rawName: "v-show",
+                value: _vm.authorize("modify", _vm.answer) && _vm.editing,
+                expression: "authorize('modify', answer) && editing"
+              }
+            ],
+            on: {
+              submit: function($event) {
+                $event.preventDefault()
+                return _vm.update($event)
+              }
+            }
+          },
+          [
+            _c(
+              "div",
+              { staticClass: "form-group" },
               [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("textarea", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.body,
-                        expression: "body"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { rows: "10", required: "" },
-                    domProps: { value: _vm.body },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.body = $event.target.value
-                      }
-                    }
-                  })
-                ]),
-                _vm._v(" "),
                 _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    attrs: { disabled: _vm.isInvalid }
-                  },
-                  [_vm._v("Update")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-outline-secondary",
-                    attrs: { type: "button" },
-                    on: { click: _vm.cancel }
-                  },
-                  [_vm._v("Cancel")]
-                )
-              ]
-            )
-          : _c("div", [
-              _c("div", { domProps: { innerHTML: _vm._s(_vm.bodyHtml) } }),
-              _vm._v(" "),
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-4" }, [
-                  _c("div", { staticClass: "ml-auto" }, [
-                    _vm.authorize("modify", _vm.answer)
-                      ? _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-sm btn-outline-info",
-                            on: {
-                              click: function($event) {
-                                $event.preventDefault()
-                                return _vm.edit($event)
-                              }
-                            }
-                          },
-                          [_vm._v("Edit")]
-                        )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _vm.authorize("modify", _vm.answer)
-                      ? _c(
-                          "button",
-                          {
-                            staticClass: "btn btn-sm btn-outline-danger",
-                            on: { click: _vm.destroy }
-                          },
-                          [_vm._v("Delete")]
-                        )
-                      : _vm._e()
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-4" }),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "col-4" },
+                  "m-editor",
+                  { attrs: { body: _vm.body, name: _vm.uniqueName } },
                   [
-                    _c("user-info", {
-                      attrs: { model: _vm.answer, label: "Answered" }
+                    _c("textarea", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.body,
+                          expression: "body"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { rows: "10", required: "" },
+                      domProps: { value: _vm.body },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.body = $event.target.value
+                        }
+                      }
                     })
-                  ],
-                  1
+                  ]
                 )
-              ])
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { disabled: _vm.isInvalid }
+              },
+              [_vm._v("Update")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-outline-secondary",
+                attrs: { type: "button" },
+                on: { click: _vm.cancel }
+              },
+              [_vm._v("Cancel")]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.editing,
+                expression: "!editing"
+              }
+            ]
+          },
+          [
+            _c("div", {
+              ref: "bodyHtml",
+              attrs: { id: _vm.uniqueName },
+              domProps: { innerHTML: _vm._s(_vm.bodyHtml) }
+            }),
+            _vm._v(" "),
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-4" }, [
+                _c("div", { staticClass: "ml-auto" }, [
+                  _vm.authorize("modify", _vm.answer)
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-sm btn-outline-info",
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.edit($event)
+                            }
+                          }
+                        },
+                        [_vm._v("Edit")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.authorize("modify", _vm.answer)
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-sm btn-outline-danger",
+                          on: { click: _vm.destroy }
+                        },
+                        [_vm._v("Delete")]
+                      )
+                    : _vm._e()
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-4" }),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col-4" },
+                [
+                  _c("user-info", {
+                    attrs: { model: _vm.answer, label: "Answered" }
+                  })
+                ],
+                1
+              )
             ])
+          ]
+        )
       ])
     ],
     1
@@ -56413,37 +56468,14 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "card" }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _c("div", { staticClass: "card-body tab-content" }, [
-      _c(
-        "div",
-        { staticClass: "tab-pane active", attrs: { id: "write" } },
-        [_vm._t("default")],
-        2
-      ),
-      _vm._v(" "),
-      _c("div", {
-        staticClass: "tab-pane",
-        attrs: { id: "preview" },
-        domProps: { innerHTML: _vm._s(_vm.preview) }
-      })
-    ])
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
+    _c("div", { staticClass: "card-header" }, [
       _c("ul", { staticClass: "nav nav-tabs card-header-tabs" }, [
         _c("li", { staticClass: "nav-item" }, [
           _c(
             "a",
             {
               staticClass: "nav-link active",
-              attrs: { "data-toggle": "tab", href: "#write" }
+              attrs: { "data-toggle": "tab", href: _vm.tabId("write", "#") }
             },
             [_vm._v("Write")]
           )
@@ -56454,15 +56486,31 @@ var staticRenderFns = [
             "a",
             {
               staticClass: "nav-link",
-              attrs: { "data-toggle": "tab", href: "#preview" }
+              attrs: { "data-toggle": "tab", href: _vm.tabId("preview", "#") }
             },
             [_vm._v("Preview")]
           )
         ])
       ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body tab-content" }, [
+      _c(
+        "div",
+        { staticClass: "tab-pane active", attrs: { id: _vm.tabId("write") } },
+        [_vm._t("default")],
+        2
+      ),
+      _vm._v(" "),
+      _c("div", {
+        staticClass: "tab-pane",
+        attrs: { id: _vm.tabId("preview") },
+        domProps: { innerHTML: _vm._s(_vm.preview) }
+      })
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -56503,29 +56551,40 @@ var render = function() {
               }
             },
             [
-              _c("div", { staticClass: "form-group" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.body,
-                      expression: "body"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { rows: "7", name: "body" },
-                  domProps: { value: _vm.body },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.body = $event.target.value
-                    }
-                  }
-                })
-              ]),
+              _c(
+                "div",
+                { staticClass: "form-group" },
+                [
+                  _c(
+                    "m-editor",
+                    { attrs: { body: _vm.body, name: "new-answer" } },
+                    [
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.body,
+                            expression: "body"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { rows: "7", name: "body" },
+                        domProps: { value: _vm.body },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.body = $event.target.value
+                          }
+                        }
+                      })
+                    ]
+                  )
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("div", { staticClass: "form-group" }, [
                 _c(
@@ -56630,29 +56689,33 @@ var render = function() {
                   "div",
                   { staticClass: "form-group" },
                   [
-                    _c("m-editor", { attrs: { body: _vm.body } }, [
-                      _c("textarea", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.body,
-                            expression: "body"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { rows: "10", required: "" },
-                        domProps: { value: _vm.body },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                    _c(
+                      "m-editor",
+                      { attrs: { body: _vm.body, name: _vm.uniqueName } },
+                      [
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.body,
+                              expression: "body"
                             }
-                            _vm.body = $event.target.value
+                          ],
+                          staticClass: "form-control",
+                          attrs: { rows: "10", required: "" },
+                          domProps: { value: _vm.body },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.body = $event.target.value
+                            }
                           }
-                        }
-                      })
-                    ])
+                        })
+                      ]
+                    )
                   ],
                   1
                 ),
@@ -69921,8 +69984,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   methods: {
     highlight: function highlight() {
+      var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
       // récupère la ref de la div v-html ='bodyHtml'
-      var el = this.$refs.bodyHtml; // quand on fait cancel cela garde le highlight
+      var el;
+
+      if (!id) {
+        el = this.$refs.bodyHtml;
+      } else {
+        el = document.getElementById(id);
+      } // quand on fait cancel cela garde le highlight
+
 
       if (el) prismjs__WEBPACK_IMPORTED_MODULE_0___default.a.highlightAllUnder(el);
     }
@@ -69940,11 +70011,22 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _highlight__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./highlight */ "./resources/js/mixins/highlight.js");
+/* harmony import */ var _components_Vote_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/Vote.vue */ "./resources/js/components/Vote.vue");
+/* harmony import */ var _components_UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/UserInfo.vue */ "./resources/js/components/UserInfo.vue");
+/* harmony import */ var _components_MEditor_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/MEditor.vue */ "./resources/js/components/MEditor.vue");
+/* harmony import */ var _highlight__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./highlight */ "./resources/js/mixins/highlight.js");
+
+
+
  // permet de rendre le texte plus jolie
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_highlight__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  mixins: [_highlight__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  components: {
+    Vote: _components_Vote_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    UserInfo: _components_UserInfo_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    MEditor: _components_MEditor_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
   data: function data() {
     return {
       editing: false
