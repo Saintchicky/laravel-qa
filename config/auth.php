@@ -42,7 +42,8 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            // c'était token, c'est les arrivés API
+            'driver' => 'passport',
             'provider' => 'users',
             'hash' => false,
         ],

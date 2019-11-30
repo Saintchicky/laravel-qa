@@ -5,10 +5,13 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+// Grâce à ce Trait, on peut avoir des méthodes spécifiques pour l'authentification
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
+    // On appelle ici les traits (class generic qui complète une class comme celle-ci)
+    use Notifiable, HasApiTokens;
     /**
      * The attributes that are mass assignable.
      *

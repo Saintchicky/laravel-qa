@@ -8,6 +8,7 @@ use App\Question;
 use App\Policies\QuestionPolicy;
 use App\Answer;
 use App\Policies\AnswerPolicy;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        // enregistre les routes nécessaires qui permet de règler les problèmes de token d'accès
+        // et révoque les tokens clients et personnels
+        Passport::routes();
+
     }
 }
