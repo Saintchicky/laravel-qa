@@ -17,6 +17,8 @@ Route::get('/questions','Api\QuestionsController@index');
 /*So by doing this way we no longer need to define new routes
 when we working with other endpoints such as update or delete question.*/
 // Route middleware protège cette route accessible uniquement que si on est loggé
+// On ajoute question devant slug pour éviter des confusions d'id
+Route::get('/questions/{question}-{slug}', 'Api\QuestionDetailsController');
 Route::middleware(['auth:api'])->group(function() {
     Route::apiResource('/questions', 'Api\QuestionsController')->except('index');
 });
