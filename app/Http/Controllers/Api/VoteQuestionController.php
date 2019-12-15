@@ -16,6 +16,5 @@ class VoteQuestionController extends Controller
             'message' => 'Thanks for the feedback',
             'votesCount' => $votesCount
         ]);
-
     }
 }
