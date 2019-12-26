@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 // Route::post('/token','Auth\LoginController@getToken');
 Route::post('/login', 'Api\Auth\LoginController@store');
 // on appelle le middleware auth:api car il faut qu'on soit loggé pour se déloggé
-Route::delete('/logout', 'Api\Auth\LoginController@destroy')->middleware('auth:api');
+Route::delete('/logout', 'Api\Auth\LoginController@destroy');
 Route::post('/register','Api\Auth\RegisterController');
 
 Route::get('/questions','Api\QuestionsController@index');
