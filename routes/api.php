@@ -12,7 +12,12 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/token','Auth\LoginController@getToken');
+// Route::post('/token','Auth\LoginController@getToken');
+Route::post('/login', 'Api\Auth\LoginController@store');
+// on appelle le middleware auth:api car il faut qu'on soit loggé pour se déloggé
+Route::delete('/logout', 'Api\Auth\LoginController@destroy')->middleware('auth:api');
+Route::post('/register','Api\Auth\RegisterController');
+
 Route::get('/questions','Api\QuestionsController@index');
 Route::get('/questions/{question}/answers', 'Api\AnswersController@index');
 /*So by doing this way we no longer need to define new routes
