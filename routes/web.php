@@ -11,6 +11,9 @@
 |
 */
 
+//Permet de faire une appli generic single page spa = single page application
+Route::view('/{any}','spa')->where('any','.*');
+
 Route::get('/','QuestionsController@index');
 
 Auth::routes();

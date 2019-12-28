@@ -14,6 +14,8 @@ window.Vue = require('vue');
 import VueIziToast from 'vue-izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import Autorization from './authorization/authorize';
+// pour les routes js
+import router from './router';
 
 Vue.use(VueIziToast);
 Vue.use(Autorization);
@@ -43,4 +45,5 @@ Vue.component('question-page', require('./pages/questionPage.vue').default);
 
 const app = new Vue({
     el: '#app',
+    router // routes js
 });
