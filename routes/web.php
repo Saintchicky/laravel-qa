@@ -12,11 +12,10 @@
 */
 
 //Permet de faire une appli generic single page spa = single page application
+Auth::routes(['verify'=>true]);
 Route::view('/{any}','spa')->where('any','.*');
-
 Route::get('/','QuestionsController@index');
 
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 //php artisan route:list --name=questions pour voir l'ensemble des routes de ressource

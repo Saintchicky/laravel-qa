@@ -23,9 +23,13 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                {{-- route par vue router --}}
+                <router-link class="navbar-brand" :to="{ name: 'home'}">
                     {{ config('app.name', 'QA') }}
-                </a>
+                </router-link>
+                {{-- <a class="navbar-brand" href="{{ url('/') }}">
+                    {{ config('app.name', 'QA') }}
+                </a> --}}
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -38,6 +42,8 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <router-link class="nav-item" tag="li" :to="{ name : 'questions'}"><a class="nav-link">Questions</a></router-link>
+                        <router-link class="nav-item" tag="li" :to="{ name : 'my-posts'}"><a class="nav-link">My Posts</a></router-link>
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
@@ -79,7 +85,8 @@
     <script>
         window.Auth = {!! json_encode([
             'signedIn' => Auth::check(),
-            'user'=> Auth::user()
+            'user'=> Auth::user(),
+            'url'=>route('login')
             ])
         !!}
     </script>
