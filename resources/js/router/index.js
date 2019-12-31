@@ -17,7 +17,7 @@ const router = new VueRouter({
 router.beforeEach((to,from,next)=>{
     if(to.matched.some(r => r.meta.requiresAuth) && !window.Auth.signedIn ){
         // Si pas loggué on va sur la page log
-        window.location = window.Auth.url;
+        window.location = window.Urls.login;
         // on sort
         return
     }

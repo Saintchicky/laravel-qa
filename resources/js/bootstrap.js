@@ -22,6 +22,9 @@ try {
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// Permet d'avoir le début de l'url et de l'appeler depuis n'importe quelle vue
+// window.Urls.api pour quand on est plus en environnement dev sinon localhost
+window.axios.defaults.baseURL = window.Urls.api || 'http://localhost:8000/api';
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that

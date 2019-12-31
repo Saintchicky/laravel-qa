@@ -83,12 +83,16 @@
         </main>
     </div>
     <script>
-        window.Auth = {!! json_encode([
+        // ds app js et json c'est laravel
+        window.Auth = @json([
             'signedIn' => Auth::check(),
-            'user'=> Auth::user(),
-            'url'=>route('login')
-            ])
-        !!}
+            'user' => Auth::user()
+        ]);
+        // voir ds bootstrap.js
+        window.Urls = @json([
+            'api' => url('/api'),
+            'login' => route('login')
+        ]);
     </script>
      <!-- Scripts j'ai enlevé defer car je mets le fichier script en bas-->
      <script src="{{ asset('js/app.js') }}"></script>
