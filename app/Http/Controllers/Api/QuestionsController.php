@@ -17,7 +17,7 @@ class QuestionsController extends Controller
      */
     public function index()
     {
-        $questions = Question::with('user')->get();
+        $questions = Question::with('user')->latest()->paginate(5);
         // on passes questions ds le question ressource pour convertir en tableau
 
         return QuestionResource::collection($questions);
