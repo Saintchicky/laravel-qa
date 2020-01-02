@@ -28,7 +28,13 @@
             },
             isLast () {
                 return this.meta.current_page === this.meta.last_page;
-            }
+            },
+            // eviter lorsque charge la pagination d'avoir undefined
+            pagesInfo () {
+                let currentPage = this.meta.current_page || 1,
+                    lastPage = this.meta.last_page || 1;
+                return `Page ${currentPage} of ${lastPage}`
+            },
         },
         methods: {
             switchPage () {

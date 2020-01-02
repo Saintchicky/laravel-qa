@@ -48,27 +48,38 @@ Vue.component('spinner',Spinner);
 const app = new Vue({
     el: '#app',
     data: {
-        loading: false
+        loading: false,
+        // l'axios
+        interceptor: null
     },
     // pour faire jouer le spinner intercepte la requête et la réponse
     created () {
-        // Add a request interceptor
-        axios.interceptors.request.use((config) => {
-            this.loading = true
-            return config;
-        }, (error) => {
-            this.loading = false
-            return Promise.reject(error);
-        });
-
-        // Add a response interceptor
-        axios.interceptors.response.use((response) => {
-            this.loading = false
-            return response;
-        }, (error) => {
-            this.loading = false
-            return Promise.reject(error);
-        });
+        this.enableInterceptor();
     },
-    router // routes js
+    methods: {
+        enableInterceptor () {
+            // Add a request interceptor
+            this.interceptor = axios.interceptors.request.use((config) => {
+                this.loading = true
+                return config;
+            }, (error) => {
+                this.loading = false
+                return Promise.reject(error);
+            });
+
+            // Add a response interceptor
+            axios.interceptors.response.use((response) => {
+                this.loading = false
+                return response;
+            }, (error) => {
+                this.loading = false
+                return Promise.reject(error);
+            });
+        },
+
+        disableInterceptor () {
+            axios.interceptors.request.eject(this.interceptor);
+        }
+    },
+    router // route js
 });

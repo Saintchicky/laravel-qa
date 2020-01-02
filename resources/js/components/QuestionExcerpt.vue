@@ -36,6 +36,7 @@
 
 <script>
 import destroy from '../mixins/destroy';
+import eventBus from '../event-bus';
 export default {
     mixins: [destroy],
     props: ['question'],
@@ -45,10 +46,12 @@ export default {
             return str + (count > 1 ? 's' : '')
         },
         delete () {
+        // pour enlever le spinner
+        this.$root.disableInterceptor();
         axios.delete("/questions/" + this.question.id)
             .then(({data}) => {
                 this.$toast.success(data.message, "Success", { timeout: 2000 });
-                this.$emit('deleted');
+                eventBus.$emit('deleted', this.question.id);
         });
     }
     },
