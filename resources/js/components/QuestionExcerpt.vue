@@ -18,9 +18,8 @@
                     <!-- méthode ds policies.js -->
                     <router-link :to="{ name: 'questions.edit', params: { id: question.id } }" v-if="authorize('modify', question)" 
                     class="btn btn-sm btn-outline-info">Edit</router-link>
-                    <form v-if="authorize('deleteQuestion', question)" class="form-delete" method="post" action="#">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                    </form>
+                    <!-- la méthode deleteQuestion est ds le fichier js modification -->
+                    <button v-if="authorize('deleteQuestion', question)" class="btn btn-sm btn-outline-danger" @click="destroy">Delete</button>
                 </div>
             </div>
             <p class="lead">
@@ -34,13 +33,22 @@
 </template>
 
 <script>
+import destroy from '../mixins/destroy';
 export default {
+    mixins: [destroy],
     props: ['question'],
     methods: {
         // equivalent de str pr laravel
         str_plural (str, count) {
             return str + (count > 1 ? 's' : '')
-        }
+        },
+        delete () {
+        axios.delete("/questions/" + this.question.id)
+            .then(({data}) => {
+                this.$toast.success(data.message, "Success", { timeout: 2000 });
+                this.$emit('deleted');
+        });
+    }
     },
     computed: {
         statusClasses () {
