@@ -79,7 +79,10 @@
         </nav>
 
         <main class="py-4">
-           <router-view></router-view>
+            {{-- Pour faire des transitions entre chaque page on spécifie avec le name et le mode --}}
+            <transition name="fade" mode="out-in">
+                <router-view></router-view>
+            </transition>
         </main>
     </div>
     <script>

@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="card-body">
+            <spinner v-if="$root.loading"></spinner>
             <div v-if="questions.length">
                 <question-excerpt @deleted="remove(index)" v-for="(question, index) in questions" :question="question" :key="question.id"></question-excerpt>
             </div>

@@ -18,8 +18,10 @@ class QuestionsController extends Controller
     public function index()
     {
         $questions = Question::with('user')->latest()->paginate(5);
+        // pour donner une attente pour le spinner ou loader
+        if (env('APP_ENV') == 'local') sleep(2);
         // on passes questions ds le question ressource pour convertir en tableau
-
+       
         return QuestionResource::collection($questions);
     }
 
@@ -32,6 +34,7 @@ class QuestionsController extends Controller
     public function store(AskQuestionRequest $request)
     {
         $question = $request->user()->questions()->create($request->only('title','body'));
+        if (env('APP_ENV') == 'local') sleep(2);
         return response()->json([
         'message' => "Your question has been submitted",
         // Transforme en format json avec ressource et le reformat check questionResource
