@@ -38,7 +38,8 @@ const routes = [
     {
         path: '/questions/:slug', 
         component: QuestionPage,
-        name: 'questions.show'
+        name: 'questions.show',
+        props: true // transforme l'url en props
     },
     {
         // n'importe si pas référencé ds route on a 404 ex: /ouaoauaoua

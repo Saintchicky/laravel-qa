@@ -13,8 +13,13 @@ class AnswersController extends Controller
 {    
     public function index(Question $question)
     {
-        $answers = $question->answers()->with('user')->simplePaginate(3);    
-        return AnswerResource::collection($answers);
+        $answers = $question->answers()->with('user')->where(function ($q) {
+            // pour éviter les doublons lorque que je fais laod answers et que je viens de poster une réponse
+            if (request()->has('excludes')) {
+              $q->whereNotIn('id', request()->query('excludes'));
+            }
+          })->simplePaginate(3);        
+          return AnswerResource::collection($answers);
     }
     /**
      * Store a newly created resource in storage.
